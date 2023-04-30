@@ -1,172 +1,218 @@
 import React, { useState } from "react";
-import { Button, Input, Modal, Table } from "antd";
-import "antd/dist/reset.css";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Input, Table } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
 import "./App.css";
 
 const App = () => {
-	const [editingStudent, setEditingStudent] = useState(null);
-	const [isEditing, SetIsEditing] = useState(false);
 	const [dataSource, setDataSource] = useState([
 		{
-			id: 1,
 			name: "John",
-			email: "john@gmail.com",
-			address: "john Address",
+			age: "32",
+			address: "New York",
 		},
 		{
-			id: 2,
+			name: "Jim",
+			age: "33",
+			address: "Sydney",
+		},
+		{
 			name: "David",
-			email: "david@gmail.com",
-			address: "David Address",
+			age: "40",
+			address: "Japan",
 		},
 		{
-			id: 3,
 			name: "James",
-			email: "james@gmail.com",
-			address: "James Address",
+			age: "32",
+			address: "New York",
 		},
 		{
-			id: 4,
 			name: "Sam",
-			email: "sam@gmail.com",
-			address: "Sam Address",
+			age: "40",
+			address: "Sydney",
 		},
 	]);
 
 	const columns = [
 		{
-			key: "1",
-			title: "ID",
-			dataIndex: "id",
-		},
-		{
-			key: "2",
 			title: "Name",
 			dataIndex: "name",
-		},
-		{
-			key: "3",
-			title: "Email",
-			dataIndex: "email",
-		},
-		{
-			key: "4",
-			title: "Address",
-			dataIndex: "address",
-		},
-		{
-			key: "5",
-			title: "Action",
-			render: (record) => {
-				console.log(record);
+			filterDropdown: ({
+				setSelectedKeys,
+				selectedKeys,
+				confirm,
+				clearFilters,
+			}) => {
 				return (
 					<>
-						<EditOutlined
-							onClick={() => {
-								onEditStudent(record);
+						<Input
+							autoFocus
+							placeholder="Type text here"
+							value={selectedKeys[0]}
+							onChange={(e) => {
+								setSelectedKeys(e.target.value ? [e.target.value] : []);
+								confirm({ closeDropDown: false });
 							}}
-						/>
-						<DeleteOutlined
-							onClick={() => {
-								onDeleteStudent(record);
+							onPressEnter={() => {
+								confirm();
 							}}
-							style={{ color: "red", marginLeft: 12 }}
-						/>
+							onBlur={() => {
+								confirm();
+							}}
+						></Input>
+						<Button
+							onClick={() => {
+								confirm();
+							}}
+							type="primary"
+						>
+							Search
+						</Button>
+						<Button
+							onClick={() => {
+								clearFilters();
+							}}
+							type="primary"
+							danger
+						>
+							Reset
+						</Button>
 					</>
 				);
+			},
+			filterIcon: () => {
+				return <SearchOutlined />;
+			},
+			onFilter: (value, record) => {
+				console.log(value, record);
+				return record.name.toLowerCase().includes(value.toLowerCase());
+			},
+		},
+		{
+			title: "Age",
+			dataIndex: "age",
+			filterDropdown: ({
+				setSelectedKeys,
+				selectedKeys,
+				confirm,
+				clearFilters,
+			}) => {
+				return (
+					<>
+						<Input
+							autoFocus
+							placeholder="Type text here"
+							value={selectedKeys[0]}
+							onChange={(e) => {
+								setSelectedKeys(e.target.value ? [e.target.value] : []);
+								confirm({ closeDropDown: false });
+							}}
+							onPressEnter={() => {
+								confirm();
+							}}
+							onBlur={() => {
+								confirm();
+							}}
+						></Input>
+						<Button
+							onClick={() => {
+								confirm();
+							}}
+							type="primary"
+						>
+							Search
+						</Button>
+						<Button
+							onClick={() => {
+								clearFilters();
+							}}
+							type="primary"
+							danger
+						>
+							Reset
+						</Button>
+					</>
+				);
+			},
+			filterIcon: () => {
+				return <SearchOutlined />;
+			},
+			onFilter: (value, record) => {
+				console.log(value, record);
+				return record.age === value;
+			},
+		},
+		{
+			title: "Address",
+			dataIndex: "address",
+			filterDropdown: ({
+				setSelectedKeys,
+				selectedKeys,
+				confirm,
+				clearFilters,
+			}) => {
+				return (
+					<>
+						<Input
+							autoFocus
+							placeholder="Type text here"
+							value={selectedKeys[0]}
+							onChange={(e) => {
+								setSelectedKeys(e.target.value ? [e.target.value] : []);
+								confirm({ closeDropDown: false });
+							}}
+							onPressEnter={() => {
+								confirm();
+							}}
+							onBlur={() => {
+								confirm();
+							}}
+						></Input>
+						<Button
+							onClick={() => {
+								confirm();
+							}}
+							type="primary"
+						>
+							Search
+						</Button>
+						<Button
+							onClick={() => {
+								clearFilters();
+							}}
+							type="primary"
+							danger
+						>
+							Reset
+						</Button>
+					</>
+				);
+			},
+			filterIcon: () => {
+				return <SearchOutlined />;
+			},
+			onFilter: (value, record) => {
+				console.log(value, record);
+				return record.address.toLowerCase().includes(value.toLowerCase());
 			},
 		},
 	];
 
-	const onAddStudent = () => {
-		const randomNumber = parseInt(Math.random() * 1000);
-
-		const newStudent = {
-			id: randomNumber,
-			name: "John " + randomNumber,
-			email: randomNumber + "@gmail.com",
-			address: "Address " + randomNumber,
+	const handleAddUser = () => {
+		const user = {
+			name: "Sam",
+			age: "40",
+			address: "Sydney",
 		};
 
 		setDataSource((prev) => {
-			return [...prev, newStudent];
+			return [...prev, user];
 		});
-	};
-
-	const onDeleteStudent = (record) => {
-		Modal.confirm({
-			title: "Are you sure you want to delete this student record?",
-			okText: "Yes",
-			onType: "danger",
-			onOk: () => {
-				setDataSource((prev) => {
-					return prev.filter((student) => student.id !== record.id);
-				});
-			},
-		});
-	};
-
-	const onEditStudent = (record) => {
-		console.log(record);
-		SetIsEditing(true);
-		setEditingStudent({ ...record });
-	};
-	const resetEditing = () => {
-		SetIsEditing(false);
-		setEditingStudent(null);
 	};
 	return (
 		<div className="App">
-			<Button onClick={onAddStudent}>Add a new Student</Button>
+			<Button onClick={handleAddUser}>Add</Button>
 			<Table columns={columns} dataSource={dataSource}></Table>
-			<Modal
-				title="Edit Student"
-				visible={isEditing}
-				okText="Save"
-				onCancel={() => {
-					resetEditing();
-				}}
-				onOk={() => {
-					setDataSource((prev) => {
-						console.log(prev);
-						return prev.map((student) => {
-							if (student.id === editingStudent.id) {
-								return editingStudent;
-							} else {
-								return student;
-							}
-						});
-					});
-					resetEditing();
-				}}
-			>
-				<Input
-					value={editingStudent?.name}
-					onChange={(e) => {
-						setEditingStudent((prev) => {
-							return { ...prev, name: e.target.value };
-						});
-					}}
-				/>
-				<Input
-					value={editingStudent?.email}
-					onChange={(e) => {
-						setEditingStudent((prev) => {
-							return { ...prev, email: e.target.value };
-						});
-					}}
-				/>
-				<Input
-					value={editingStudent?.address}
-					onChange={(e) => {
-						setEditingStudent((prev) => {
-							return { ...prev, address: e.target.value };
-						});
-					}}
-				/>
-			</Modal>
 		</div>
 	);
 };
